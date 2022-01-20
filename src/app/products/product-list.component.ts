@@ -35,4 +35,18 @@ export class ProductListComponent implements OnInit {
   onSelected(categoryId: string): void {
     console.log('Not yet implemented');
   }
+
+/*
+  Combine latest code with out async pipe - normal observable
+  getCombinedData() {
+    const product$ = this.http.get<Product[]>(this.productsUrl)
+    const productCategories$ = this.http.get<ProductCategory[]>('api/productCategories');
+    return combineLatest([product$, productCategories$]).pipe(
+      map( ([products, categories]) => 
+        products.map(product => ({
+          ...product,
+          category: categories.find( c => c.id === product.categoryId).name
+        })))
+    );
+  }*/
 }
