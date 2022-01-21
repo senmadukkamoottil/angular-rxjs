@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 
-import { EMPTY, Observable } from 'rxjs';
+import { combineLatest, EMPTY, Observable } from 'rxjs';
 import { catchError } from 'rxjs/internal/operators/catchError';
 import { ProductCategory } from '../product-categories/product-category';
 
 import { Product } from './product';
 import { ProductService } from './product.service';
 import { ProductCategoryService } from '../product-categories/product-category.service';
-import { map } from 'rxjs/internal/operators/map';
+import { map } from 'rxjs/operators';
 
 @Component({
   templateUrl: './product-list.component.html',
@@ -16,14 +16,17 @@ import { map } from 'rxjs/internal/operators/map';
 export class ProductListComponent implements OnInit {
   pageTitle = 'Product List';
   errorMessage = '';
-  categories;
+  categories$ = this.productCategoryService.categories$;
 
-  products$ = this.productService.products$.pipe(
+  products$ = combineLatest([this.productService.products$, this.productCategoryService.productCategoryAction$]).pipe(
+    map(([products, category]) => {
+      return products.filter(product => category? product.categoryId === category : true);
+    }),
     catchError(err => {
       this.errorMessage = err;
       return EMPTY;
     })
-  );
+  )
 
   constructor(private productService: ProductService, private productCategoryService: ProductCategoryService) { }
 
@@ -34,7 +37,7 @@ export class ProductListComponent implements OnInit {
         return EMPTY;
       })
     );*/
-    this.getProductCategories();
+    // this.getProductCategories();
   }
 
   onAdd(): void {
@@ -43,14 +46,15 @@ export class ProductListComponent implements OnInit {
 
   onSelected(categoryId: string): void {
     console.log('Not yet implemented', categoryId);
+    this.productCategoryService.productCategory.next(+categoryId);
   }
 
-  getProductCategories() {
+  /*getProductCategories() {
     this.productCategoryService.getProductCategories().pipe(
       ).subscribe(productCategories => {
         this.categories = productCategories;
       });
-  }
+  }*/
 
 /*
   Combine latest code with out async pipe - normal observable
