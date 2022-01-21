@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { throwError, Observable } from 'rxjs';
 
 import { ProductCategory } from './product-category';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -28,4 +29,14 @@ export class ProductCategoryService {
     console.error(err);
     return throwError(errorMessage);
   }
+
+  getProductCategories(): Observable<ProductCategory[]> {
+    return this.http.get<ProductCategory[]>(this.productCategoriesUrl)
+    .pipe(
+      catchError(err => {
+        return this.handleError(err);
+      })
+    )
+  }
 }
+ 

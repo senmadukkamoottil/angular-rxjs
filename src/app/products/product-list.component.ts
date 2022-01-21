@@ -2,9 +2,12 @@ import { Component, OnInit } from '@angular/core';
 
 import { EMPTY, Observable } from 'rxjs';
 import { catchError } from 'rxjs/internal/operators/catchError';
+import { ProductCategory } from '../product-categories/product-category';
 
 import { Product } from './product';
 import { ProductService } from './product.service';
+import { ProductCategoryService } from '../product-categories/product-category.service';
+import { map } from 'rxjs/internal/operators/map';
 
 @Component({
   templateUrl: './product-list.component.html',
@@ -17,7 +20,7 @@ export class ProductListComponent implements OnInit {
 
   products$: Observable<Product[]>;
 
-  constructor(private productService: ProductService) { }
+  constructor(private productService: ProductService, private productCategoryService: ProductCategoryService) { }
 
   ngOnInit(): void {
     this.products$ = this.productService.getProducts().pipe(
@@ -25,7 +28,8 @@ export class ProductListComponent implements OnInit {
         this.errorMessage = err;
         return EMPTY;
       })
-    );;
+    );
+    this.getProductCategories();
   }
 
   onAdd(): void {
@@ -33,7 +37,14 @@ export class ProductListComponent implements OnInit {
   }
 
   onSelected(categoryId: string): void {
-    console.log('Not yet implemented');
+    console.log('Not yet implemented', categoryId);
+  }
+
+  getProductCategories() {
+    this.productCategoryService.getProductCategories().pipe(
+      ).subscribe(productCategories => {
+        this.categories = productCategories;
+      });
   }
 
 /*
