@@ -18,17 +18,22 @@ export class ProductListComponent implements OnInit {
   errorMessage = '';
   categories;
 
-  products$: Observable<Product[]>;
+  products$ = this.productService.products$.pipe(
+    catchError(err => {
+      this.errorMessage = err;
+      return EMPTY;
+    })
+  );
 
   constructor(private productService: ProductService, private productCategoryService: ProductCategoryService) { }
 
   ngOnInit(): void {
-    this.products$ = this.productService.getProducts().pipe(
+    /*this.products$ = this.productService.getProducts().pipe(
       catchError(err => {
         this.errorMessage = err;
         return EMPTY;
       })
-    );
+    );*/
     this.getProductCategories();
   }
 

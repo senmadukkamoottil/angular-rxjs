@@ -14,11 +14,23 @@ import { SupplierService } from '../suppliers/supplier.service';
 export class ProductService {
   private productsUrl = 'api/products';
   private suppliersUrl = this.supplierService.suppliersUrl;
+  products$ = this.http.get<Product[]>(this.productsUrl)
+  .pipe(
+   map(products => 
+    products.map(product => ({
+      ...product,
+      price: product.price*1.5,
+      searchKey: [product.productName]
+    }) as Product)
+    ),
+    tap(data => console.log('Products: ', JSON.stringify(data))),
+    catchError(this.handleError)
+  );
 
   constructor(private http: HttpClient,
               private supplierService: SupplierService) { }
 
-  getProducts(): Observable<Product[]> {
+  /*getProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(this.productsUrl)
       .pipe(
        map(products => 
@@ -31,7 +43,7 @@ export class ProductService {
         tap(data => console.log('Products: ', JSON.stringify(data))),
         catchError(this.handleError)
       );
-  }
+  }*/
 
   private fakeProduct(): Product {
     return {
