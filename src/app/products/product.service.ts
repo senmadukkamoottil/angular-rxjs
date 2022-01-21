@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable, throwError } from 'rxjs';
+import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { Product } from './product';
@@ -26,6 +26,9 @@ export class ProductService {
     tap(data => console.log('Products: ', JSON.stringify(data))),
     catchError(this.handleError)
   );
+
+  selectedCategory = new Subject<number>();
+  selectedCategoryAction$ = this.selectedCategory.asObservable();
 
   constructor(private http: HttpClient,
               private supplierService: SupplierService) { }
